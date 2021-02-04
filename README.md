@@ -20,3 +20,10 @@ I'm fascinated by metro systems and how they manage to operate in conjunction wi
 an app that fuels that interest while being practical. As someone who has an interest to travel outside of Canada
 (and got denied that luxury recently), this app also serves as an opportunity for me to learn more about
 transportation in cities I plan to visit, while also testing my programming skills. 
+
+### User Stories
+
+- As a user I want to be able to view details about an individual station (name, line, transfers, adjacent stations)
+- As a user I want to be able to view details about a line (number of stations, terminal stations, intersecting lines)
+- As a user I want to be able to make a route from a start point and a destination
+- As a user I want to be able to save and add routes to a list of planned routes
