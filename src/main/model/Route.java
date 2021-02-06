@@ -18,8 +18,8 @@ public class Route {
         return null;
     }
 
-    public String getIdentification() {
-        return null;
+    public int getIdentification() {
+        return 0;
     }
 
     public Station getStartPoint() {
@@ -46,7 +46,7 @@ public class Route {
     //REQUIRES: the starting and end stations belong in the same metro system
     //MODIFIES: this
     //EFFECT: make a route plan from the start point to the end point by traversing through adjacent stations
-    public void planRoute(Station start, Station end, String name) {
+    public void planRoute(Station start, Station end) {
 
     }
 

@@ -46,6 +46,7 @@ public class Planner {
 
     }
 
+    //REQUIRES: the route does not already have an identification number
     //MODIFIES: route
     //EFFECT: assigns a unique identification number to the route so that it can be easily accessed
     public void assignIdentification(Route route) {

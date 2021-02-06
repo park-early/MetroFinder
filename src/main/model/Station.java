@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 
 /**
- * Representation of a station. Each station consists of the station name, the line it belongs to, and a list of
+ * Representation of a station. Each station consists of the station name, the lines it belongs to, and a list of
  * adjacent stations that can be travelled to from this one.
  *
  * Stations are initialized based on the metro system chosen (default Tokyo)
@@ -16,7 +16,7 @@ public class Station {
         return null;
     }
 
-    public Line getLine() {
+    public ArrayList<Line> getLine() {
         return null;
     }
 

@@ -25,7 +25,7 @@ public class Line {
         return null;
     }
 
-    public ArrayList<Station> getTransfers() {
+    public ArrayList<Line> getTransfers() {
         return null;
     }
 
