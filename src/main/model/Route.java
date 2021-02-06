@@ -13,6 +13,10 @@ import java.util.ArrayList;
 
 public class Route {
 
+    public Route(String name) {
+
+    }
+
     //getters
     public String getName() {
         return null;

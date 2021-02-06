@@ -26,7 +26,7 @@ class StationTest {
     @Test
     public void testConstructor() {
         assertEquals("S1", station1.getName());
-        assertEquals("Line A", station1.getLine());
+        assertEquals("Line A", station1.getLine().get(0).getName());
         assertEquals(2, station1.getNextStations().size());
     }
 }

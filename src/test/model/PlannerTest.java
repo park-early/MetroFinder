@@ -23,7 +23,7 @@ public class PlannerTest {
         testStation = new Station("S", testLine);
         testRoute1.planRoute(testStation, testStation);
         testPlanner.getPlannedRoutes().add(testRoute1);
-        testPlanner.getPlannedRoutes().add(testRoute3;
+        testPlanner.getPlannedRoutes().add(testRoute3);
         testPlanner.getCompletedRoutes().add(testRoute2);
     }
 
