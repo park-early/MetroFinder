@@ -1,66 +1,109 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Representation of a travel plan from point A to point B. A route consists of a starting point station, a
  * destination station, a list of stations going from the starting point to the end point, and a route name and id.
  * The route name and id is used to distinguish routes in the planner.
  *
- * A route can be planned as long as a starting station and end station are given and the stations are initialized
- * (default Tokyo). A route cannot be edited after made, besides changing the name.
+ * A route can be planned as long as a starting station is given and the stations are initialized (default Tokyo).
+ * A route cannot be edited after made, besides changing the name. addStation builds a route in conjunction with
+ * user inputs in MetroFinderApp.
  */
 
 public class Route {
+    private String name;
+    private int identification;
+    private Station start;
+    private Station end;
+    private List<Station> pathToDestination;
 
+    //EFFECT: construct a route with only a route name. Other fields need to be filled with planRoute. Identification
+    //        of 0 indicates it has not been given a unique id by the planner
     public Route(String name) {
-
+        this.name = name;
+        this.identification = 0;
+        this.start = null;
+        this.end = null;
+        this.pathToDestination = new ArrayList<>();
     }
 
     //getters
     public String getName() {
-        return null;
+        return this.name;
     }
 
     public int getIdentification() {
-        return 0;
+        return this.identification;
     }
 
     public Station getStartPoint() {
-        return null;
+        return this.start;
     }
 
     public Station getEndPoint() {
-        return null;
+        return this.end;
     }
 
-    public ArrayList<Station> getPathToDestination() {
-        return null;
+    public List<Station> getPathToDestination() {
+        return this.pathToDestination;
     }
 
     //setters
-    public void setName() {
-
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setIdentification() {
-
+    public void setIdentification(int id) {
+        this.identification = id;
     }
 
-    //REQUIRES: the starting and end stations belong in the same metro system
+    public void setStart(Station start) {
+        this.start = start;
+    }
+
+    public void setEnd(Station end) {
+        this.end = end;
+    }
+
     //MODIFIES: this
-    //EFFECT: make a route plan from the start point to the end point by traversing through adjacent stations
-    public void planRoute(Station start, Station end) {
-
+    //EFFECT: add a station to the pathToDestination, returns true if succesful
+    public boolean addStation(Station station) {
+        if (this.getPathToDestination().isEmpty()) {
+            this.pathToDestination.add(station);
+            return true;
+        } else if (this.pathToDestination.get(this.pathToDestination.size() - 1).equals(station)) {
+            return false;
+        }
+        this.pathToDestination.add(station);
+        return true;
     }
 
-    //EFFECT: print the route id, name, and total number of stations
-    public void viewRoute() {
+    //REQUIRES: pathToDestination for this is not empty
+    //MODIFIES: this
+    //EFFECT: remove the last added station from the pathToDestination
+    public void removeStation() {
+        this.pathToDestination.remove(this.pathToDestination.size() - 1);
+    }
 
+    //EFFECT: print the route id, name, and total number of stations. Info for condensed view in planner
+    public void viewRoute() {
+        System.out.println("ID: " + this.identification + " Route: " + this.name);
+        System.out.println("Total stations in route: " + this.pathToDestination.size());
     }
 
     //EFFECT: print the route id, name, start and end, list of stations in the route, and total number of stations
     public void viewRouteDetailed() {
-
+        int count = 1;
+        System.out.println("ID: " + this.identification + " Route: " + this.name);
+        System.out.println("Start: " + this.start + " End: " + this.end);
+        System.out.println("Total stations in route: " + this.pathToDestination.size());
+        for (Station s : this.pathToDestination) {
+            System.out.println(count + ". " + s.getName());
+            count++;
+        }
     }
 }

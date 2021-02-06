@@ -6,22 +6,25 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PlannerTest {
-    Planner testPlanner;
-    Route testRoute1;
-    Route testRoute2;
-    Route testRoute3;
-    Line testLine;
-    Station testStation;
+    private Planner testPlanner;
+    private Route testRoute1;
+    private Route testRoute2;
+    private Route testRoute3;
+    private Line testLine;
+    private Station testStation;
 
     @BeforeEach
     public void setup() {
         testPlanner = new Planner();
         testRoute1 = new Route("Route A");
+        testRoute1.setIdentification(1);
         testRoute2 = new Route("Route B");
+        testRoute2.setIdentification(2);
         testRoute3 = new Route("Route C");
+        testRoute3.setIdentification(3);
         testLine = new Line("Line A", "Red");
         testStation = new Station("S", testLine);
-        testRoute1.planRoute(testStation, testStation);
+        testRoute1.addStation(testStation);
         testPlanner.getPlannedRoutes().add(testRoute1);
         testPlanner.getPlannedRoutes().add(testRoute3);
         testPlanner.getCompletedRoutes().add(testRoute2);
@@ -31,6 +34,7 @@ public class PlannerTest {
     public void testAssignIdentification() {
         testPlanner.assignIdentification(testRoute1);
         assertEquals(1, testRoute1.getIdentification());
+        assertEquals(2, testPlanner.getRouteIdTracker());
     }
 
     @Test
@@ -55,11 +59,11 @@ public class PlannerTest {
     public void testCompleteRoute() {
         testPlanner.newCurrentRoute(testRoute3);
         testPlanner.completeRoute();
-        assertEquals(null, testPlanner.getCurrentRoute());
+        assertNull(testPlanner.getCurrentRoute());
         assertEquals(1, testPlanner.getPlannedRoutes().size());
         assertEquals(2, testPlanner.getCompletedRoutes().size());
-        assertEquals(testRoute2, testPlanner.getPlannedRoutes().get(0));
-        assertEquals(testRoute3, testPlanner.getPlannedRoutes().get(1));
+        assertEquals(testRoute2, testPlanner.getCompletedRoutes().get(0));
+        assertEquals(testRoute3, testPlanner.getCompletedRoutes().get(1));
     }
 
     @Test

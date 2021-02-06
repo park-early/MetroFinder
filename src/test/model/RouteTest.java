@@ -6,69 +6,62 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RouteTest {
-    Line testLine;
-    Line testLine2;
-    Station station1;
-    Station station2;
-    Station station3;
-    Station station4;
-    Station station5;
-    Route testRoute;
+    private Station station1;
+    private Station station2;
+    private Line testLine;
+    private Route testRoute;
 
     @BeforeEach
     public void setup() {
         testLine = new Line("Line A", "Red");
-        testLine2 = new Line("Line B", "Blue");
         station1 = new Station("S1", testLine);
         station2 = new Station("S2", testLine);
-        station2.getLine().add(testLine2);
-        station3 = new Station("S3", testLine2);
-        station4 = new Station("S4", testLine);
-        station5 = new Station("S5", testLine);
         station1.getNextStations().add(station2);
-        station1.getNextStations().add(station5);
         station2.getNextStations().add(station1);
-        station2.getNextStations().add(station3);
-        station2.getNextStations().add(station4);
-        station3.getNextStations().add(station2);
-        station3.getNextStations().add(station5);
-        station4.getNextStations().add(station2);
-        station5.getNextStations().add(station1);
-        station5.getNextStations().add(station3);
         testRoute = new Route("Route X");
     }
 
     @Test
     public void testConstructor() {
         assertEquals("Route X", testRoute.getName());
+        assertNull(testRoute.getStartPoint());
+        assertNull(testRoute.getEndPoint());
+        assertEquals(0, testRoute.getPathToDestination().size());
     }
 
     @Test
-    public void testPlanRouteSameStation() {
-        testRoute.planRoute(station1, station1);
-        assertEquals(station1, testRoute.getStartPoint());
-        assertEquals(station1, testRoute.getEndPoint());
-        assertEquals(1, testRoute.getPathToDestination().size());
+    public void testAddStation() {
+        assertTrue(testRoute.addStation(station1));
         assertEquals(station1, testRoute.getPathToDestination().get(0));
     }
 
     @Test
-    public void testPlanRouteTakeTheShorterPath() {
-        testRoute.planRoute(station1, station4);
-        assertEquals(station1, testRoute.getStartPoint());
-        assertEquals(station4, testRoute.getEndPoint());
-        assertEquals(3, testRoute.getPathToDestination().size());
+    public void testAddStationMultiple() {
+        assertTrue(testRoute.addStation(station1));
+        assertTrue(testRoute.addStation(station2));
         assertEquals(station1, testRoute.getPathToDestination().get(0));
         assertEquals(station2, testRoute.getPathToDestination().get(1));
-        assertEquals(station4, testRoute.getPathToDestination().get(2));
     }
 
     @Test
-    public void testPlanRouteTakeTheFirstPathIfEqualLength() {
-        testRoute.planRoute(station1, station3);
-        assertEquals(3, testRoute.getPathToDestination().size());
-        assertEquals(station1, testRoute.getPathToDestination().get(0));
-        assertEquals(station2, testRoute.getPathToDestination().get(1));
-        assertEquals(station3, testRoute.getPathToDestination().get(2));
+    public void testAddStationSameStation() {
+        assertTrue(testRoute.addStation(station1));
+        assertFalse(testRoute.addStation(station1));
+    }
+
+    @Test
+    public void testRemoveStation() {
+        testRoute.getPathToDestination().add(station1);
+        testRoute.removeStation();
+        assertEquals(0, testRoute.getPathToDestination().size());
+    }
+
+    @Test
+    public void testRemoveStationMultiple() {
+        testRoute.getPathToDestination().add(station1);
+        testRoute.getPathToDestination().add(station2);
+        testRoute.removeStation();
+        testRoute.removeStation();
+        assertEquals(0, testRoute.getPathToDestination().size());
     }
 }

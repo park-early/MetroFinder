@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StationTest {
-    Line testLine;
-    Line testLine2;
-    Station station1;
-    Station station2;
-    Station station3;
+    private Line testLine;
+    private Line testLine2;
+    private Station station1;
+    private Station station2;
+    private Station station3;
 
     @BeforeEach
     public void setup() {

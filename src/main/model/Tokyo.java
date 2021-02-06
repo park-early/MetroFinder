@@ -36,10 +36,10 @@ public class Tokyo {
         Line mita = new Line("Mita", "I|Blue");
         Line shinjuku = new Line("Shinjuku", "S|Leaf Green");
         initializeAsakusaLines(asakusa);
-        initializeMitaLines(mita);
-        initializeShinjukuLines(shinjuku);
         this.lines.add(asakusa);
+        initializeMitaLines(mita);
         this.lines.add(mita);
+        initializeShinjukuLines(shinjuku);
         this.lines.add(shinjuku);
     }
 
