@@ -99,7 +99,7 @@ public class Route {
     public void viewRouteDetailed() {
         int count = 1;
         System.out.println("ID: " + this.identification + " Route: " + this.name);
-        System.out.println("Start: " + this.start + " End: " + this.end);
+        System.out.println("Start: " + this.start.getName() + " End: " + this.end.getName());
         System.out.println("Total stations in route: " + this.pathToDestination.size());
         for (Station s : this.pathToDestination) {
             System.out.println(count + ". " + s.getName());

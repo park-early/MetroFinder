@@ -2,6 +2,7 @@ package ui;
 
 import model.*;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class MetroFinderApp {
@@ -15,6 +16,7 @@ public class MetroFinderApp {
         boolean keepGoing = true;
         String command = null;
 
+        planner = new Planner();
         tokyo = new Tokyo();
         tokyo.initializeTokyo();
         input = new Scanner(System.in);
@@ -40,9 +42,9 @@ public class MetroFinderApp {
         System.out.println("Welcome to MetroFinder");
         System.out.println("-------------------------------------");
         System.out.println("How can I help?");
-        System.out.println("L -> View lines in " + tokyo.getName());
-        System.out.println("P -> View your planner");
-        System.out.println("Q -> Quit app");
+        System.out.println("l -> View lines in " + tokyo.getName());
+        System.out.println("p -> View your planner");
+        System.out.println("q -> Quit app");
         // "M -> Change metro system"  -------> eventually
     }
 
@@ -62,13 +64,13 @@ public class MetroFinderApp {
         boolean keepGoing = true;
         String command = null;
 
-        for (Line l : tokyo.getLines()) {
-            System.out.println(l.getName() + " Line - " + l.getIdentification());
-        }
-        System.out.println("-------------------------------------");
-        System.out.println("Enter a line name to learn more\nor enter \"b\" to go back");
-
         while (keepGoing) {
+            for (Line l : tokyo.getLines()) {
+                System.out.println(l.getName() + " Line - " + l.getIdentification());
+            }
+            System.out.println("-------------------------------------");
+            System.out.println("Enter a line name to learn more\nor enter \"b\" to go back");
+
             command = input.next();
             command = command.toLowerCase();
 
@@ -141,48 +143,153 @@ public class MetroFinderApp {
         boolean keepGoing = true;
         String command = null;
 
-        this.planner.viewPlanner();
-        System.out.println("-------------------------------------");
-        System.out.println("Enter a route id to learn more\nEnter \"b\" to go back\nEnter \"m\" to plan a new route");
-
         while (keepGoing) {
+            this.planner.viewPlanner();
+            System.out.println("-------------------------------------");
+            System.out.println("Enter a route id to learn more"
+                    + "\nEnter \"m\" to plan a new route"
+                    + "\nEnter \"c\" to change your current route"
+                    + "\nEnter \"r\" to remove a route"
+                    + "\nEnter \"b\" to go back");
+
             command = input.next();
             command = command.toLowerCase();
 
             if (command.equals("b")) {
                 keepGoing = false;
+            } else  if (command.equals("c")) {
+                //displayChangeCurrentRouteMenu();
             } else {
                 processCommandPlannerMenu(command);
             }
         }
     }
 
-    //EFFECT: display detailed information about a route
+    //EFFECT: redirect console display to a new menu based on user input
     public void processCommandPlannerMenu(String command) {
-        boolean badInput = true;
+        if (command.equals("m")) {
+            displayRouteMaker();
+        } else {
+            displayRouteInfo(command);
+        }
+    }
 
-        for (Route r : this.planner.getCompletedRoutes()) {
-            String id = String.valueOf(r.getIdentification());
+    //EFFECT: display detailed information about a route
+    public void displayRouteInfo(String command) {
+        Route route = null;
+
+        if (findRouteInPlanned(command) != null) {
+            route = findRouteInPlanned(command);
+        } else if (findRouteInCompleted(command) != null) {
+            route = findRouteInCompleted(command);
+        } else {
+            String id = String.valueOf(this.planner.getCurrentRoute().getIdentification());
             if (id.equals(command)) {
-                r.viewRouteDetailed();
-                badInput = false;
+                route = this.planner.getCurrentRoute();
+            } else {
+                System.out.println("Sorry, that option doesn't exist");
             }
         }
+
+        if (route != null) {
+            route.viewRouteDetailed();
+            System.out.println("Change route name? Enter \"yes\"");
+            if (input.next().toLowerCase().equals("yes")) {
+                displayRouteNameChanger(route);
+            }
+        }
+    }
+
+    //EFFECT: searches for the route in plannedRoutes
+    private Route findRouteInPlanned(String command) {
         for (Route r : this.planner.getPlannedRoutes()) {
             String id = String.valueOf(r.getIdentification());
             if (id.equals(command)) {
-                r.viewRouteDetailed();
-                badInput = false;
+                return r;
             }
         }
-        String id = String.valueOf(this.planner.getCurrentRoute().getIdentification());
-        if (id.equals(command)) {
-            this.planner.getCurrentRoute().viewRouteDetailed();
-        }
+        return null;
+    }
 
-        if (badInput) {
+    //EFFECT: searches for the route in completedRoutes
+    private Route findRouteInCompleted(String command) {
+        for (Route r : this.planner.getCompletedRoutes()) {
+            String id = String.valueOf(r.getIdentification());
+            if (id.equals(command)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
+    //MODIFIES: route
+    //EFFECT: change the name of a route
+    public void displayRouteNameChanger(Route route) {
+        System.out.println("-------------------------------------");
+        System.out.println("Enter the new route name");
+
+        route.setName(input.next());
+    }
+
+    //MODIFIES: this, route
+    public void displayRouteMaker() {
+        String command = null;
+        boolean keepGoing = true;
+
+        System.out.println("-------------------------------------");
+        System.out.println("Enter a route name: ");
+
+        Route route = new Route(input.next());
+
+        System.out.println("-------------------------------------");
+        System.out.println("Enter a starting station: ");
+        System.out.println("(Case-Sensitive)");
+
+        command = input.next();
+
+        while (keepGoing) {
+            Station choice;
+
+            choice = getStation(command, route);
+            chooseStation(choice);
+            command = input.next();
+
+            if (command.equals("end")) {
+                keepGoing = false;
+                route.setEnd(choice);
+                route.setStart(route.getPathToDestination().get(0));
+                this.planner.assignIdentification(route);
+                this.planner.getPlannedRoutes().add(route);
+            }
+        }
+    }
+
+    //MODIFIES: route
+    //EFFECT: search and return a station while adding it to the route
+    private Station getStation(String command, Route route) {
+        for (Line l : tokyo.getLines()) {
+            for (Station s : l.getStations()) {
+                if (s.getName().equals(command)) {
+                    route.getPathToDestination().add(s);
+                    return s;
+                }
+            }
+        }
+        return null;
+    }
+
+    //EFFECT: presents the next possible stations to add to the path
+    private void chooseStation(Station choice) {
+        System.out.println("-------------------------------------");
+        System.out.println("Enter the next station from options: ");
+        System.out.println("(Case-Sensitive)");
+        System.out.println("Enter \"end\" to end the route");
+        if (choice != null) {
+            for (Station s : choice.getNextStations()) {
+                System.out.println(s.getName());
+            }
+        } else {
             System.out.println("Sorry, that option doesn't exist");
-            displayLines();
         }
     }
 }
