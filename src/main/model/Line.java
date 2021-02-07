@@ -46,7 +46,7 @@ public class Line {
     //        identification symbol and colour, and other lines that intersect with it
     public void viewLineInfo() {
         int count = 1;
-        System.out.println(this.name + "Line. Identifier: " + this.id);
+        System.out.println(this.name + " Line - Identifier: " + this.id);
         System.out.println("Stations:");
         for (Station s : this.stations) {
             System.out.println(count + ". " + s.getName());

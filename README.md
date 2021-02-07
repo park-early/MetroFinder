@@ -28,3 +28,4 @@ transportation in cities I plan to visit, while also testing my programming skil
 - As a user I want to be able to manually make a route from a start point and a destination
 - As a user I want to be able to save and add routes to a list of planned routes and completed routes
 - As a user I want to be able to track interesting info based on my completed routes
+- As a user I want to be able to switch between metro systems

@@ -17,14 +17,20 @@ import java.util.List;
  */
 
 public class Tokyo {
+    private final String name;
     private List<Line> lines;
 
     //EFFECT: constructs a new tokyo metro system with no lines
     public Tokyo() {
+        this.name = "Tokyo";
         lines = new ArrayList<>();
     }
 
     //getters
+    public String getName() {
+        return this.name;
+    }
+
     public List<Line> getLines() {
         return lines;
     }
