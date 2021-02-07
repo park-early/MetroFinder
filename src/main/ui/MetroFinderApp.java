@@ -2,7 +2,6 @@ package ui;
 
 import model.*;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class MetroFinderApp {
@@ -158,7 +157,9 @@ public class MetroFinderApp {
             if (command.equals("b")) {
                 keepGoing = false;
             } else  if (command.equals("c")) {
-                //displayChangeCurrentRouteMenu();
+                displayCurrentRouteMenu();
+            } else  if (command.equals("r")) {
+                displayRemoveRouteMenu();
             } else {
                 processCommandPlannerMenu(command);
             }
@@ -288,6 +289,66 @@ public class MetroFinderApp {
             for (Station s : choice.getNextStations()) {
                 System.out.println(s.getName());
             }
+        } else {
+            System.out.println("Sorry, that option doesn't exist");
+        }
+    }
+
+    //EFFECT: user has to option to complete the current route or select a new one
+    private void displayCurrentRouteMenu() {
+        String command = null;
+
+        System.out.println("-------------------------------------");
+        System.out.println("Enter \"f\" to finish the current route");
+        System.out.println("Enter \"s\" to change the current route");
+
+        command = (input.next());
+
+        if (command.equals("f") && (this.planner.getCurrentRoute() != null)) {
+            this.planner.completeRoute();
+        } else if (command.equals("s")) {
+            displayChangeCurrentRouteMenu();
+        } else {
+            System.out.println("Sorry, that option doesn't exist");
+        }
+    }
+
+    //MODIFIES: this
+    //EFFECT: change the current route to a new one from the list of planned routes
+    public void displayChangeCurrentRouteMenu() {
+        Route route = null;
+
+        System.out.println("-------------------------------------");
+        for (Route r : this.planner.getPlannedRoutes()) {
+            r.viewRoute();
+        }
+        System.out.println("Enter the id of the new current route");
+        route = findRouteInPlanned(input.next());
+
+        if (route != null) {
+            this.planner.newCurrentRoute(route);
+        } else {
+            System.out.println("Sorry, that option doesn't exist");
+        }
+    }
+
+    public void displayRemoveRouteMenu() {
+        String command = null;
+        Route route = null;
+
+        System.out.println("-------------------------------------");
+        System.out.println("Enter the id of route you wish to remove");
+        System.out.println("Note: you cannot remove the current route");
+        System.out.println("      unless you change it first");
+
+        command = input.next();
+
+        if (findRouteInPlanned(command) != null) {
+            route = findRouteInPlanned(command);
+            this.planner.getPlannedRoutes().remove(route);
+        } else if (findRouteInCompleted(command) != null) {
+            route = findRouteInCompleted(command);
+            this.planner.getCompletedRoutes().remove(route);
         } else {
             System.out.println("Sorry, that option doesn't exist");
         }
