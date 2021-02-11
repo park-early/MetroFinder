@@ -16,6 +16,7 @@ public class TokyoTest {
 
     @Test
     public void testInitializeTokyo() {
+        assertEquals("Tokyo", testTokyo.getName());
         assertEquals(3, testTokyo.getLines().size());
         assertEquals("Asakusa", testTokyo.getLines().get(0).getName());
         assertEquals(8, testTokyo.getLines().get(0).getStations().size());

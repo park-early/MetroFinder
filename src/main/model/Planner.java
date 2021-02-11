@@ -13,9 +13,9 @@ import java.util.List;
  */
 
 public class Planner {
-    private List<Route> plannedRoutes;
+    private final List<Route> plannedRoutes;
     private Route currentRoute;
-    private List<Route> completedRoutes;
+    private final List<Route> completedRoutes;
     private int routeIdTracker;
 
     //EFFECT: constructs a planner with no planned, current, or completed routes
@@ -42,32 +42,6 @@ public class Planner {
     public int getRouteIdTracker() {
         return this.routeIdTracker;
     }
-
-    //EFFECT: print the contents of the planner (current, planned, and completed routes along with statistics)
-    public void viewPlanner() {
-        System.out.println("Your Current Route");
-        System.out.println("-------------------------------------");
-        if (this.currentRoute != null) {
-            this.currentRoute.viewRoute();
-        } else {
-            System.out.println("No current route selected");
-        }
-        System.out.println("-------------------------------------");
-        System.out.println("Your Planned Routes");
-        System.out.println("-------------------------------------");
-        for (Route r : this.plannedRoutes) {
-            r.viewRoute();
-        }
-        System.out.println("-------------------------------------");
-        System.out.println("Your Completed Routes");
-        System.out.println("-------------------------------------");
-        for (Route r : this.completedRoutes) {
-            r.viewRoute();
-        }
-        System.out.println("-------------------------------------");
-        System.out.println("Total # of stations visited: " + tallyStations());
-    }
-
 
     //REQUIRES: currentRoute is not null
     //MODIFIES: this

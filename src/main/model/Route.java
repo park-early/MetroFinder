@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,7 +18,7 @@ public class Route {
     private int identification;
     private Station start;
     private Station end;
-    private List<Station> pathToDestination;
+    private final List<Station> pathToDestination;
 
     //EFFECT: construct a route with only a route name. Other fields need to be filled with planRoute. Identification
     //        of 0 indicates it has not been given a unique id by the planner
@@ -70,7 +69,7 @@ public class Route {
     }
 
     //MODIFIES: this
-    //EFFECT: add a station to the pathToDestination, returns true if succesful
+    //EFFECT: add a station to the pathToDestination, returns true if successful
     public boolean addStation(Station station) {
         if (this.getPathToDestination().isEmpty()) {
             this.pathToDestination.add(station);
@@ -87,23 +86,5 @@ public class Route {
     //EFFECT: remove the last added station from the pathToDestination
     public void removeStation() {
         this.pathToDestination.remove(this.pathToDestination.size() - 1);
-    }
-
-    //EFFECT: print the route id, name, and total number of stations. Info for condensed view in planner
-    public void viewRoute() {
-        System.out.println("ID: " + this.identification + " Route: " + this.name);
-        System.out.println("Total stations in route: " + this.pathToDestination.size());
-    }
-
-    //EFFECT: print the route id, name, start and end, list of stations in the route, and total number of stations
-    public void viewRouteDetailed() {
-        int count = 1;
-        System.out.println("ID: " + this.identification + " Route: " + this.name);
-        System.out.println("Start: " + this.start.getName() + " End: " + this.end.getName());
-        System.out.println("Total stations in route: " + this.pathToDestination.size());
-        for (Station s : this.pathToDestination) {
-            System.out.println(count + ". " + s.getName());
-            count++;
-        }
     }
 }

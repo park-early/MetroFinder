@@ -30,6 +30,16 @@ public class RouteTest {
     }
 
     @Test
+    public void testSetters() {
+        testRoute.setName("Line Y");
+        testRoute.setStart(station1);
+        testRoute.setEnd(station2);
+        assertEquals("Line Y", testRoute.getName());
+        assertEquals(station1, testRoute.getStartPoint());
+        assertEquals(station2, testRoute.getEndPoint());
+    }
+
+    @Test
     public void testAddStation() {
         assertTrue(testRoute.addStation(station1));
         assertEquals(station1, testRoute.getPathToDestination().get(0));

@@ -14,8 +14,8 @@ import java.util.List;
 public class Line {
     private final String name;
     private final String id;
-    private List<Station> stations;
-    private List<Line> transfers;
+    private final List<Station> stations;
+    private final List<Line> transfers;
 
     //EFFECT: constructs a new line with a name, identification, and empty stations and transfers
     public Line(String name, String id) {
@@ -40,21 +40,5 @@ public class Line {
 
     public List<Line> getTransfers() {
         return this.transfers;
-    }
-
-    //EFFECT: print relevant info about the line (list of stations including terminal stations, name of line, line
-    //        identification symbol and colour, and other lines that intersect with it
-    public void viewLineInfo() {
-        int count = 1;
-        System.out.println(this.name + " Line - Identifier: " + this.id);
-        System.out.println("Stations:");
-        for (Station s : this.stations) {
-            System.out.println(count + ". " + s.getName());
-            count++;
-        }
-        System.out.println("Lines that can be transferred to from this one:");
-        for (Line t : this.transfers) {
-            System.out.println(t.name);
-        }
     }
 }

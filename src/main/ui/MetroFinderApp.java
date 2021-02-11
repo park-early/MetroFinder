@@ -5,15 +5,15 @@ import model.*;
 import java.util.Scanner;
 
 public class MetroFinderApp {
-    private Planner planner;
+    private final Planner planner;
     private final Tokyo tokyo;
-    private Scanner input;
+    private final Scanner input;
 
     //EFFECT: runs the MetroFinder app
     //code body from TellerApp
     public MetroFinderApp() {
         boolean keepGoing = true;
-        String command = null;
+        String command;
 
         planner = new Planner();
         tokyo = new Tokyo();
@@ -61,7 +61,7 @@ public class MetroFinderApp {
     //EFFECT: display menu of all lines in the metro system
     public void displayLines() {
         boolean keepGoing = true;
-        String command = null;
+        String command;
 
         while (keepGoing) {
             for (Line l : tokyo.getLines()) {
@@ -89,7 +89,7 @@ public class MetroFinderApp {
 
         for (Line l : tokyo.getLines()) {
             if (l.getName().toLowerCase().equals(command)) {
-                l.viewLineInfo();
+                viewLineInfo(l);
                 keepGoing = true;
                 line = l;
                 badInput = false;
@@ -101,13 +101,14 @@ public class MetroFinderApp {
 
     //EFFECT: process user input at the menu displaying detailed line info
     private void processCommandLineMenu(boolean keepGoing, boolean badInput, Line line) {
-        String command = null;
+        String command;
         while (badInput) {
             System.out.println("Sorry, that option doesn't exist. Try something else");
             badInput = false;
         }
 
         while (keepGoing) {
+            System.out.println("-------------------------------------");
             System.out.println("Enter a station number to learn more\nor enter \"b\" to go back");
             command = input.next();
             command = command.toLowerCase();
@@ -127,7 +128,7 @@ public class MetroFinderApp {
         for (int i = 0; i < line.getStations().size(); i++) {
             String num = String.valueOf(i + 1);
             if (num.equals(command)) {
-                line.getStations().get(i).viewStationInfo();
+                viewStationInfo(line.getStations().get(i));
                 badInput = false;
             }
         }
@@ -140,10 +141,10 @@ public class MetroFinderApp {
     //EFFECT: display menu of the user's planner
     public void displayPlanner() {
         boolean keepGoing = true;
-        String command = null;
+        String command;
 
         while (keepGoing) {
-            this.planner.viewPlanner();
+            viewPlanner();
             System.out.println("-------------------------------------");
             System.out.println("Enter a route id to learn more"
                     + "\nEnter \"m\" to plan a new route"
@@ -193,7 +194,7 @@ public class MetroFinderApp {
         }
 
         if (route != null) {
-            route.viewRouteDetailed();
+            viewRouteDetailed(route);
             System.out.println("Change route name? Enter \"yes\"");
             if (input.next().toLowerCase().equals("yes")) {
                 displayRouteNameChanger(route);
@@ -234,7 +235,7 @@ public class MetroFinderApp {
 
     //MODIFIES: this, route
     public void displayRouteMaker() {
-        String command = null;
+        String command;
         boolean keepGoing = true;
 
         System.out.println("-------------------------------------");
@@ -296,7 +297,7 @@ public class MetroFinderApp {
 
     //EFFECT: user has to option to complete the current route or select a new one
     private void displayCurrentRouteMenu() {
-        String command = null;
+        String command;
 
         System.out.println("-------------------------------------");
         System.out.println("Enter \"f\" to finish the current route");
@@ -316,11 +317,11 @@ public class MetroFinderApp {
     //MODIFIES: this
     //EFFECT: change the current route to a new one from the list of planned routes
     public void displayChangeCurrentRouteMenu() {
-        Route route = null;
+        Route route;
 
         System.out.println("-------------------------------------");
         for (Route r : this.planner.getPlannedRoutes()) {
-            r.viewRoute();
+            viewRoute(r);
         }
         System.out.println("Enter the id of the new current route");
         route = findRouteInPlanned(input.next());
@@ -333,8 +334,8 @@ public class MetroFinderApp {
     }
 
     public void displayRemoveRouteMenu() {
-        String command = null;
-        Route route = null;
+        String command;
+        Route route;
 
         System.out.println("-------------------------------------");
         System.out.println("Enter the id of route you wish to remove");
@@ -352,5 +353,85 @@ public class MetroFinderApp {
         } else {
             System.out.println("Sorry, that option doesn't exist");
         }
+    }
+
+    //EFFECT: print relevant info about the station (station name, what line it belongs to, and any adjacent stations)
+    public void viewStationInfo(Station station) {
+        System.out.println(station.getName());
+        System.out.println("-------------------------------------");
+        System.out.println("This station belongs to the following lines:");
+        System.out.println("-------------------------------------");
+        for (Line l : station.getLine()) {
+            System.out.println(l.getName());
+        }
+        System.out.println("-------------------------------------");
+        System.out.println("From this station you can travel to:");
+        System.out.println("-------------------------------------");
+        for (Station s : station.getNextStations()) {
+            System.out.println(s.getName());
+        }
+    }
+
+    //EFFECT: print relevant info about the line (list of stations including terminal stations, name of line, line
+    //        identification symbol and colour, and other lines that intersect with it
+    public void viewLineInfo(Line line) {
+        int count = 1;
+        System.out.println(line.getName() + " Line - Identifier: " + line.getIdentification());
+        System.out.println("-------------------------------------");
+        System.out.println("Stations:");
+        System.out.println("-------------------------------------");
+        for (Station s : line.getStations()) {
+            System.out.println(count + ". " + s.getName());
+            count++;
+        }
+        System.out.println("-------------------------------------");
+        System.out.println("Lines that can be transferred to from this one:");
+        System.out.println("-------------------------------------");
+        for (Line t : line.getTransfers()) {
+            System.out.println(t.getName());
+        }
+    }
+
+    //EFFECT: print the route id, name, and total number of stations. Info for condensed view in planner
+    public void viewRoute(Route route) {
+        System.out.println("ID: " + route.getIdentification() + " Route: " + route.getName());
+        System.out.println("Total stations in route: " + route.getPathToDestination().size());
+    }
+
+    //EFFECT: print the route id, name, start and end, list of stations in the route, and total number of stations
+    public void viewRouteDetailed(Route route) {
+        int count = 1;
+        System.out.println("ID: " + route.getIdentification() + " Route: " + route.getName());
+        System.out.println("Start: " + route.getStartPoint().getName() + " End: " + route.getEndPoint().getName());
+        System.out.println("Total stations in route: " + route.getPathToDestination().size());
+        for (Station s : route.getPathToDestination()) {
+            System.out.println(count + ". " + s.getName());
+            count++;
+        }
+    }
+
+    //EFFECT: print the contents of the planner (current, planned, and completed routes along with statistics)
+    public void viewPlanner() {
+        System.out.println("Your Current Route");
+        System.out.println("-------------------------------------");
+        if (planner.getCurrentRoute() != null) {
+            viewRoute(planner.getCurrentRoute());
+        } else {
+            System.out.println("No current route selected");
+        }
+        System.out.println("-------------------------------------");
+        System.out.println("Your Planned Routes");
+        System.out.println("-------------------------------------");
+        for (Route r : planner.getPlannedRoutes()) {
+            viewRoute(r);
+        }
+        System.out.println("-------------------------------------");
+        System.out.println("Your Completed Routes");
+        System.out.println("-------------------------------------");
+        for (Route r : planner.getCompletedRoutes()) {
+            viewRoute(r);
+        }
+        System.out.println("-------------------------------------");
+        System.out.println("Total # of stations visited: " + planner.tallyStations());
     }
 }

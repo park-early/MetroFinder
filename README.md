@@ -23,9 +23,19 @@ transportation in cities I plan to visit, while also testing my programming skil
 
 ### User Stories
 
+**Done**
+
 - As a user I want to be able to view details about an individual station (name, line, transfers, adjacent stations)
 - As a user I want to be able to view details about a line (number of stations, terminal stations, intersecting lines)
 - As a user I want to be able to manually make a route from a start point and a destination
 - As a user I want to be able to save and add routes to a list of planned routes and completed routes
+- As a user I want to be able to set a current route as completed
+
+**Semi-done**
+
 - As a user I want to be able to track interesting info based on my completed routes
+
+**Planned or probably not possible for me *yet***
+
+- As a user I want the app to provide me the shortest route given a start and end
 - As a user I want to be able to switch between metro systems

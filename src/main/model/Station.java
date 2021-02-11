@@ -12,8 +12,8 @@ import java.util.List;
 
 public class Station {
     private final String name;
-    private List<Line> line;
-    private List<Station> nextStations;
+    private final List<Line> line;
+    private final List<Station> nextStations;
 
     //EFFECT: constructs a new station with a name and line it belongs to. Additional lines and adjacent stations must
     //        be added separately
@@ -35,18 +35,5 @@ public class Station {
 
     public List<Station> getNextStations() {
         return this.nextStations;
-    }
-
-    //EFFECT: print relevant info about the station (station name, what line it belongs to, and any adjacent stations)
-    public void viewStationInfo() {
-        System.out.println(this.name);
-        System.out.println("This station belongs to the following lines:");
-        for (Line l : this.line) {
-            System.out.println(l.getName());
-        }
-        System.out.println("From this station you can travel to:");
-        for (Station s : this.nextStations) {
-            System.out.println(s.getName());
-        }
     }
 }

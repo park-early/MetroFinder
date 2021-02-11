@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Tokyo {
     private final String name;
-    private List<Line> lines;
+    private final List<Line> lines;
 
     //EFFECT: constructs a new tokyo metro system with no lines
     public Tokyo() {
@@ -41,11 +41,17 @@ public class Tokyo {
         Line asakusa = new Line("Asakusa", "A|Rose");
         Line mita = new Line("Mita", "I|Blue");
         Line shinjuku = new Line("Shinjuku", "S|Leaf Green");
+
         initializeAsakusaLines(asakusa);
+        asakusa.getTransfers().add(mita);
         this.lines.add(asakusa);
+
         initializeMitaLines(mita);
+        mita.getTransfers().addAll(Arrays.asList(asakusa, shinjuku));
         this.lines.add(mita);
+
         initializeShinjukuLines(shinjuku);
+        shinjuku.getTransfers().add(mita);
         this.lines.add(shinjuku);
     }
 
