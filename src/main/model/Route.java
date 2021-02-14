@@ -69,16 +69,18 @@ public class Route {
     }
 
     //MODIFIES: this
-    //EFFECT: add a station to the pathToDestination, returns true if successful
+    //EFFECT: add a station to the pathToDestination, returns true if the route is empty, or if the station is an
+    //        adjacent station to the last station added; otherwise false
     public boolean addStation(Station station) {
         if (this.getPathToDestination().isEmpty()) {
             this.pathToDestination.add(station);
             return true;
-        } else if (this.pathToDestination.get(this.pathToDestination.size() - 1).equals(station)) {
+        } else if (this.pathToDestination.get(this.pathToDestination.size() - 1).getNextStations().contains(station)) {
+            this.pathToDestination.add(station);
+            return true;
+        } else {
             return false;
         }
-        this.pathToDestination.add(station);
-        return true;
     }
 
     //REQUIRES: pathToDestination for this is not empty

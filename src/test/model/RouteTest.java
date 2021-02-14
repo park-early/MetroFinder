@@ -54,6 +54,14 @@ public class RouteTest {
     }
 
     @Test
+    public void testAddStationNotAdjacent() {
+        Station station3 = new Station("S3", testLine);
+        station3.getNextStations().add(station2);
+        assertTrue(testRoute.addStation(station1));
+        assertFalse(testRoute.addStation(station3));
+    }
+
+    @Test
     public void testAddStationSameStation() {
         assertTrue(testRoute.addStation(station1));
         assertFalse(testRoute.addStation(station1));

@@ -43,10 +43,9 @@ public class Planner {
         return this.routeIdTracker;
     }
 
-    //REQUIRES: currentRoute is not null
     //MODIFIES: this
     //EFFECT: sets the current route being taken as completed, then removes it as the current route into the list of
-    //        completed routes
+    //        completed routes; if the current route is null, nothing happens
     public void completeRoute() {
         this.completedRoutes.add(this.currentRoute);
         this.currentRoute = null;

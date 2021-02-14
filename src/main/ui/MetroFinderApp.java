@@ -234,10 +234,8 @@ public class MetroFinderApp {
     }
 
     //MODIFIES: this, route
+    //EFFECT: displays the menu for adding stations to a route
     public void displayRouteMaker() {
-        String command;
-        boolean keepGoing = true;
-
         System.out.println("-------------------------------------");
         System.out.println("Enter a route name: ");
 
@@ -247,18 +245,32 @@ public class MetroFinderApp {
         System.out.println("Enter a starting station: ");
         System.out.println("(Case-Sensitive)");
 
+        processCommandRouteMaker(route);
+    }
+
+    //MODIFIES: this, route
+    //EFFECT: process the user input for the route maker menu
+    private void processCommandRouteMaker(Route route) {
+        String command;
+        boolean keepGoing = true;
+
         command = input.next();
 
         while (keepGoing) {
             Station choice;
 
-            choice = getStation(command, route);
-            chooseStation(choice);
+            choice = getStartingStation(command, route);
+            if (choice == null) {
+                System.out.println("Please select a valid station");
+            } else {
+                chooseStation(choice);
+            }
+
             command = input.next();
 
             if (command.equals("end")) {
                 keepGoing = false;
-                route.setEnd(choice);
+                route.setEnd(route.getPathToDestination().get(route.getPathToDestination().size() - 1));
                 route.setStart(route.getPathToDestination().get(0));
                 this.planner.assignIdentification(route);
                 this.planner.getPlannedRoutes().add(route);
@@ -268,12 +280,17 @@ public class MetroFinderApp {
 
     //MODIFIES: route
     //EFFECT: search and return a station while adding it to the route
-    private Station getStation(String command, Route route) {
+    private Station getStartingStation(String command, Route route) {
         for (Line l : tokyo.getLines()) {
             for (Station s : l.getStations()) {
                 if (s.getName().equals(command)) {
-                    route.getPathToDestination().add(s);
-                    return s;
+                    if (route.addStation(s)) {
+                        System.out.println("Added " + s.getName() + " to the route.");
+                        return s;
+                    } else {
+                        System.out.println("Unable to add the station specified");
+                        return null;
+                    }
                 }
             }
         }
@@ -286,6 +303,7 @@ public class MetroFinderApp {
         System.out.println("Enter the next station from options: ");
         System.out.println("(Case-Sensitive)");
         System.out.println("Enter \"end\" to end the route");
+        System.out.println("-------------------------------------");
         if (choice != null) {
             for (Station s : choice.getNextStations()) {
                 System.out.println(s.getName());
@@ -404,6 +422,7 @@ public class MetroFinderApp {
         System.out.println("ID: " + route.getIdentification() + " Route: " + route.getName());
         System.out.println("Start: " + route.getStartPoint().getName() + " End: " + route.getEndPoint().getName());
         System.out.println("Total stations in route: " + route.getPathToDestination().size());
+        System.out.println("-------------------------------------");
         for (Station s : route.getPathToDestination()) {
             System.out.println(count + ". " + s.getName());
             count++;
