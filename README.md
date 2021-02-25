@@ -39,3 +39,5 @@ transportation in cities I plan to visit, while also testing my programming skil
 
 - As a user I want the app to provide me the shortest route given a start and end
 - As a user I want to be able to switch between metro systems
+- As a user I want to be able to save my planner data to file
+- As a user I want to be able to load my planner data from file
