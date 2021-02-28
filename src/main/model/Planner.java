@@ -1,5 +1,9 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +16,7 @@ import java.util.List;
  * planner, tally the number of stations visited (not unique), and set a route as a current travel plan
  */
 
-public class Planner {
+public class Planner implements Writable {
     private final List<Route> plannedRoutes;
     private Route currentRoute;
     private final List<Route> completedRoutes;
@@ -41,6 +45,11 @@ public class Planner {
 
     public int getRouteIdTracker() {
         return this.routeIdTracker;
+    }
+
+    //setters
+    public void setIdTracker(int id) {
+        this.routeIdTracker = id;
     }
 
     //MODIFIES: this
@@ -82,5 +91,44 @@ public class Planner {
         }
 
         return count;
+    }
+
+    //EFFECT: save this planner as a JSON object
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        if (this.currentRoute != null) {
+            json.put("current", this.currentRoute.toJson());
+        }
+        if (!this.plannedRoutes.isEmpty()) {
+            json.put("planned", plannedRoutesToJson());
+        }
+        if (!this.completedRoutes.isEmpty()) {
+            json.put("completed", completedRoutesToJson());
+        }
+        json.put("id", this.routeIdTracker);
+        return json;
+    }
+
+    //EFFECT: save the planned routes from the planner as JSON array
+    public JSONArray plannedRoutesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Route r : this.getPlannedRoutes()) {
+            jsonArray.put(r.toJson());
+        }
+
+        return jsonArray;
+    }
+
+    //EFFECT: save the completed routes from the planner as JSON array
+    public JSONArray completedRoutesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Route r : this.getCompletedRoutes()) {
+            jsonArray.put(r.toJson());
+        }
+
+        return jsonArray;
     }
 }

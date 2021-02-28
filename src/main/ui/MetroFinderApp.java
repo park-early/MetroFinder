@@ -1,24 +1,38 @@
 package ui;
 
 import model.*;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class MetroFinderApp {
-    private final Planner planner;
+    private static final String JSON_STORE = "./data/planner.json";
+    private Planner planner;
     private final Tokyo tokyo;
     private final Scanner input;
+    private final JsonWriter jsonWriter;
+    private final JsonReader jsonReader;
 
-    //EFFECT: runs the MetroFinder app
-    //code body from TellerApp
+    //EFFECT: constructs and sets up the MetroFinderApp
     public MetroFinderApp() {
-        boolean keepGoing = true;
-        String command;
-
         planner = new Planner();
         tokyo = new Tokyo();
         tokyo.initializeTokyo();
         input = new Scanner(System.in);
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
+
+        runMetroFinderApp();
+    }
+
+    //EFFECT: runs MetroFinderApp
+    //code body from TellerApp
+    public void runMetroFinderApp() {
+        boolean keepGoing = true;
+        String command;
 
         while (keepGoing) {
             displayMainMenu();
@@ -32,6 +46,7 @@ public class MetroFinderApp {
             }
         }
 
+        savePlanner();
         System.out.println("\nSee you next time!");
     }
 
@@ -43,18 +58,27 @@ public class MetroFinderApp {
         System.out.println("How can I help?");
         System.out.println("l -> View lines in " + tokyo.getName());
         System.out.println("p -> View your planner");
-        System.out.println("q -> Quit app");
+        System.out.println("q -> Save and quit app");
+        System.out.println("load -> Load your saved planner");
         // "M -> Change metro system"  -------> eventually
     }
 
     //EFFECT: redirect console display to a new menu based on user input
     public void processCommandMainMenu(String command) {
-        if (command.equals("l")) {
-            displayLines();
-        } else if (command.equals("p")) {
-            displayPlanner();
-        } else {
-            System.out.println("Sorry, that option doesn't exist");
+        command = command.toLowerCase();
+        switch (command) {
+            case "l":
+                displayLines();
+                break;
+            case "p":
+                displayPlanner();
+                break;
+            case "load":
+                loadPlanner();
+                break;
+            default:
+                System.out.println("Sorry, that option doesn't exist");
+                break;
         }
     }
 
@@ -351,6 +375,7 @@ public class MetroFinderApp {
         }
     }
 
+    //EFFECT: displays the route menu
     public void displayRemoveRouteMenu() {
         String command;
         Route route;
@@ -452,5 +477,25 @@ public class MetroFinderApp {
         }
         System.out.println("-------------------------------------");
         System.out.println("Total # of stations visited: " + planner.tallyStations());
+    }
+
+    public void savePlanner() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(planner);
+            jsonWriter.close();
+            System.out.println("Saved your planner to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
+
+    public void loadPlanner() {
+        try {
+            planner = jsonReader.read();
+            System.out.println("Loaded your planner from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
+        }
     }
 }

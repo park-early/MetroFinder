@@ -1,5 +1,9 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +17,7 @@ import java.util.List;
  * user inputs in MetroFinderApp.
  */
 
-public class Route {
+public class Route implements Writable {
     private String name;
     private int identification;
     private Station start;
@@ -88,5 +92,28 @@ public class Route {
     //EFFECT: remove the last added station from the pathToDestination
     public void removeStation() {
         this.pathToDestination.remove(this.pathToDestination.size() - 1);
+    }
+
+    //EFFECT: save this route as a JSON object
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", this.name);
+        json.put("id", this.identification);
+        json.put("start", this.start.toJson());
+        json.put("end", this.end.toJson());
+        json.put("route", stationsToJson());
+        return json;
+    }
+
+    //EFFECT: save each station in the route as JSON array for the route
+    public JSONArray stationsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Station s : this.getPathToDestination()) {
+            jsonArray.put(s.toJson());
+        }
+
+        return jsonArray;
     }
 }

@@ -1,5 +1,8 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,7 +13,7 @@ import java.util.List;
  * Stations are initialized based on the metro system chosen (default Tokyo)
  */
 
-public class Station {
+public class Station implements Writable {
     private final String name;
     private final List<Line> line;
     private final List<Station> nextStations;
@@ -35,5 +38,13 @@ public class Station {
 
     public List<Station> getNextStations() {
         return this.nextStations;
+    }
+
+    //EFFECT: save this station as a JSON object
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", this.name);
+        return json;
     }
 }
