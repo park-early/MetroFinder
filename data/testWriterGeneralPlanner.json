@@ -1,0 +1,25 @@
+{
+    "current": {
+        "route": [{"name": "Station 7"}],
+        "name": "Route 3",
+        "start": {"name": "Station 7"},
+        "end": {"name": "Station 9"},
+        "id": 3
+    },
+    "currentExists": true,
+    "planned": [{
+        "route": [{"name": "Station 1"}],
+        "name": "Route 1",
+        "start": {"name": "Station 1"},
+        "end": {"name": "Station 3"},
+        "id": 1
+    }],
+    "completed": [{
+        "route": [{"name": "Station 4"}],
+        "name": "Route 2",
+        "start": {"name": "Station 4"},
+        "end": {"name": "Station 6"},
+        "id": 2
+    }],
+    "id": 4
+}

@@ -93,18 +93,26 @@ public class Planner implements Writable {
         return count;
     }
 
-    //EFFECT: save this planner as a JSON object
+    //EFFECT: save this planner as a JSON object, saves dummy objects in case those fields are not filled
+    //        when saving the planner
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
         if (this.currentRoute != null) {
             json.put("current", this.currentRoute.toJson());
+            json.put("currentExists", true);
+        } else {
+            json.put("currentExists", false);
         }
         if (!this.plannedRoutes.isEmpty()) {
             json.put("planned", plannedRoutesToJson());
+        } else {
+            json.put("planned", noRoutesToJson());
         }
         if (!this.completedRoutes.isEmpty()) {
             json.put("completed", completedRoutesToJson());
+        } else {
+            json.put("completed", noRoutesToJson());
         }
         json.put("id", this.routeIdTracker);
         return json;
@@ -130,5 +138,10 @@ public class Planner implements Writable {
         }
 
         return jsonArray;
+    }
+
+    //EFFECT: sets up save file for no routes
+    public JSONArray noRoutesToJson() {
+        return new JSONArray();
     }
 }

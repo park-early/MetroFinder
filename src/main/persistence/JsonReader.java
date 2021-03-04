@@ -16,6 +16,7 @@ import java.util.stream.Stream;
  * Represents a reader that reads Planner from JSON data stored in file
  *
  * Most methods from JsonSerializationDemo
+ * https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo.git
  */
 
 public class JsonReader {
@@ -59,9 +60,11 @@ public class JsonReader {
     // EFFECTS: parses planned routes from JSON object and adds them to the planner
     private void addPlanned(Planner p, JSONObject jsonObject) {
         JSONArray routes = jsonObject.getJSONArray("planned");
-        for (Object json : routes) {
-            JSONObject nextRoute = (JSONObject) json;
-            p.getPlannedRoutes().add(buildRoute(nextRoute));
+        if (routes.length() != 0) {
+            for (Object json : routes) {
+                JSONObject nextRoute = (JSONObject) json;
+                p.getPlannedRoutes().add(buildRoute(nextRoute));
+            }
         }
     }
 
@@ -69,17 +72,21 @@ public class JsonReader {
     // EFFECTS: parses completed routes from JSON object and adds them to the planner
     private void addCompleted(Planner p, JSONObject jsonObject) {
         JSONArray routes = jsonObject.getJSONArray("completed");
-        for (Object json : routes) {
-            JSONObject nextRoute = (JSONObject) json;
-            p.getCompletedRoutes().add(buildRoute(nextRoute));
+        if (routes.length() != 0) {
+            for (Object json : routes) {
+                JSONObject nextRoute = (JSONObject) json;
+                p.getCompletedRoutes().add(buildRoute(nextRoute));
+            }
         }
     }
 
     // MODIFIES: p
     // EFFECTS: parses current route from JSON object and adds to the planner
     private void addCurrent(Planner p, JSONObject jsonObject) {
-        Route route = buildRoute(jsonObject);
-        p.newCurrentRoute(route);
+        if (jsonObject.getBoolean("currentExists")) {
+            Route route = buildRoute(jsonObject.getJSONObject("current"));
+            p.newCurrentRoute(route);
+        }
     }
 
     //MODIFIES: p
@@ -94,14 +101,16 @@ public class JsonReader {
     private Route buildRoute(JSONObject jsonObject) {
         String name = jsonObject.getString("name");
         int id = jsonObject.getInt("id");
-        Station start = (Station) jsonObject.get("start");
-        Station end = (Station) jsonObject.get("end");
+        JSONObject start = jsonObject.getJSONObject("start");
+        Station startStation = new Station(start.getString("name"), null);
+        JSONObject end = jsonObject.getJSONObject("end");
+        Station endStation = new Station(end.getString("name"), null);
         JSONArray stations = jsonObject.getJSONArray("route");
 
         Route route = new Route(name);
         route.setIdentification(id);
-        route.setStart(start);
-        route.setEnd(end);
+        route.setStart(startStation);
+        route.setEnd(endStation);
 
         for (Object json : stations) {
             JSONObject nextStation = (JSONObject) json;
