@@ -7,13 +7,22 @@
         "id": 3
     },
     "currentExists": true,
-    "planned": [{
-        "route": [{"name": "Mita"}],
-        "name": "test",
-        "start": {"name": "Mita"},
-        "end": {"name": "Shibakoen"},
-        "id": 1
-    }],
+    "planned": [
+        {
+            "route": [{"name": "Mita"}],
+            "name": "test",
+            "start": {"name": "Mita"},
+            "end": {"name": "Shibakoen"},
+            "id": 1
+        },
+        {
+            "route": [{"name": "Mita"}],
+            "name": "route",
+            "start": {"name": "Mita"},
+            "end": {"name": "Mita"},
+            "id": 4
+        }
+    ],
     "completed": [{
         "route": [{"name": "Mita"}],
         "name": "test",
@@ -21,5 +30,5 @@
         "end": {"name": "Gotanda"},
         "id": 2
     }],
-    "id": 4
+    "id": 5
 }
