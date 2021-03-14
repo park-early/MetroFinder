@@ -56,8 +56,10 @@ public class Planner implements Writable {
     //EFFECT: sets the current route being taken as completed, then removes it as the current route into the list of
     //        completed routes; if the current route is null, nothing happens
     public void completeRoute() {
-        this.completedRoutes.add(this.currentRoute);
-        this.currentRoute = null;
+        if (this.currentRoute != null) {
+            this.completedRoutes.add(this.currentRoute);
+            this.currentRoute = null;
+        }
     }
 
     //REQUIRES: the route being passed is part of the planned routes, not completed routes

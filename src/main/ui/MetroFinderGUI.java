@@ -12,6 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
+import static java.awt.GridBagConstraints.RELATIVE;
+import static java.awt.GridBagConstraints.VERTICAL;
+
 public class MetroFinderGUI implements ActionListener {
     private Tokyo tokyo;
     private Planner planner;
@@ -26,6 +29,7 @@ public class MetroFinderGUI implements ActionListener {
     private JLabel dataDisplayInfo;
     private JButton save;
     private JButton load;
+    private JButton complete;
     private JRadioButton planned;
     private JRadioButton completed;
     private JRadioButton current;
@@ -54,6 +58,7 @@ public class MetroFinderGUI implements ActionListener {
         frame.setVisible(true);
     }
 
+    //MODIFIES: pane
     //EFFECT: builds the main interface; calls other methods to build individual panels
     public void placeComponentsForMainMenu(Container pane) {
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -77,6 +82,7 @@ public class MetroFinderGUI implements ActionListener {
         pane.add(tabbedPane, BorderLayout.CENTER);
     }
 
+    //MODIFIES: panel
     //EFFECT: places scroll box to select line and JLabel to display info
     public void placeComponentsForLineMenu(JPanel panel) {
         String[] lines = {tokyo.getLines().get(0).getName(),
@@ -89,6 +95,7 @@ public class MetroFinderGUI implements ActionListener {
         panel.add(lineDisplayInfo);
     }
 
+    //MODIFIES: panel
     //EFFECT: places buttons and components for the planner menu
     public void placeComponentsForPlannerMenu(JPanel panel) {
         planned = new JRadioButton("Planned");
@@ -96,21 +103,52 @@ public class MetroFinderGUI implements ActionListener {
         current = new JRadioButton("Current Route");
         ButtonGroup plannerButtons = new ButtonGroup();
         plannerDisplayInfo = new JLabel();
+        complete = new JButton("Complete");
 
         planned.addActionListener(this);
         completed.addActionListener(this);
         current.addActionListener(this);
+        complete.addActionListener(this);
         plannerButtons.add(current);
         plannerButtons.add(planned);
         plannerButtons.add(completed);
         current.setSelected(true);
 
-        panel.add(current);
-        panel.add(planned);
-        panel.add(completed);
-        panel.add(plannerDisplayInfo);
+        panel.setLayout(new GridBagLayout());
+        layoutPlannerMenu(panel);
     }
 
+    //MODIFIES: panel
+    //EFFECT: arranges components for it to fit in the panel
+    public void layoutPlannerMenu(JPanel panel) {
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weighty = 1;
+        gbc.anchor = GridBagConstraints.PAGE_START;
+        panel.add(current, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        panel.add(planned, gbc);
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        panel.add(completed, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
+        panel.add(plannerDisplayInfo, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.PAGE_END;
+        panel.add(complete, gbc);
+    }
+
+    //MODIFIES: panel
     //EFFECT: places buttons and components for the save/load data menu
     public void placeComponentsForDataCard(JPanel panel) {
         save = new JButton("Save Planner");
@@ -120,7 +158,7 @@ public class MetroFinderGUI implements ActionListener {
         load.addActionListener(this);
         panel.add(save);
         panel.add(load);
-        panel.add(dataDisplayInfo);
+        panel.add(dataDisplayInfo, Component.BOTTOM_ALIGNMENT);
     }
 
     //EFFECT: redirects control flow to a method to deal with what button/action was selected
@@ -134,6 +172,8 @@ public class MetroFinderGUI implements ActionListener {
             loadPlanner();
         } else if (e.getSource() == current || e.getSource() == planned || e.getSource() == completed) {
             actionPerformedPlannerMenu();
+        } else if (e.getSource() == complete) {
+            planner.completeRoute();
         }
     }
 
@@ -163,6 +203,7 @@ public class MetroFinderGUI implements ActionListener {
         return info;
     }
 
+    //EFFECT: sets the text for the label depending on what planner element needs to be shown
     public void actionPerformedPlannerMenu() {
         String info;
         if (current.isSelected()) {
@@ -175,6 +216,7 @@ public class MetroFinderGUI implements ActionListener {
         plannerDisplayInfo.setText("<html>" + info + "</html>");
     }
 
+    //EFFECT: displays current route information
     public String viewCurrentRouteInfo() {
         String title = "<b>Your Current Route</b><br/><br/>";
         String body;
@@ -187,6 +229,7 @@ public class MetroFinderGUI implements ActionListener {
         return title + body;
     }
 
+    //EFFECT: displays planned route information
     public String viewPlannedRoutesInfo() {
         String title = "<b>Your Planned Routes</b><br/><br/>";
         String body = "";
@@ -197,6 +240,7 @@ public class MetroFinderGUI implements ActionListener {
         return title + body;
     }
 
+    //EFFECT: displays completed route information
     public String viewCompletedRoutesInfo() {
         String title = "<b>Your Completed Routes</b><br/><br/>";
         String body = "";

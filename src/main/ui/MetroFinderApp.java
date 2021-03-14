@@ -348,7 +348,7 @@ public class MetroFinderApp {
 
         command = (input.next());
 
-        if (command.equals("f") && (this.planner.getCurrentRoute() != null)) {
+        if (command.equals("f")) {
             this.planner.completeRoute();
         } else if (command.equals("s")) {
             displayChangeCurrentRouteMenu();
