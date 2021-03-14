@@ -124,6 +124,6 @@ public class JsonReader {
     private void addStationToRoute(Route r, JSONObject jsonObject) {
         String name = jsonObject.getString("name");
         Station station = new Station(name, null);
-        r.addStation(station);
+        r.addStationFromSave(station);
     }
 }

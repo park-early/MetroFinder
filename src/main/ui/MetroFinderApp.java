@@ -480,6 +480,7 @@ public class MetroFinderApp {
         System.out.println("Total # of stations visited: " + planner.tallyStations());
     }
 
+    //EFFECT: saves the planner to file
     public void savePlanner() {
         try {
             jsonWriter.open();
@@ -491,6 +492,7 @@ public class MetroFinderApp {
         }
     }
 
+    //EFFECT: loads the planner from file
     public void loadPlanner() {
         try {
             planner = jsonReader.read();

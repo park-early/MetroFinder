@@ -87,6 +87,12 @@ public class Route implements Writable {
         }
     }
 
+    //MODIFIES: this
+    //EFFECT: variation of addStation, allows JSON to build routes regardless since we are making new objects
+    public void addStationFromSave(Station station) {
+        this.getPathToDestination().add(station);
+    }
+
     //REQUIRES: pathToDestination for this is not empty
     //MODIFIES: this
     //EFFECT: remove the last added station from the pathToDestination

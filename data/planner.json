@@ -1,34 +1,6 @@
 {
-    "current": {
-        "route": [{"name": "Shinjuku"}],
-        "name": "test",
-        "start": {"name": "Shinjuku"},
-        "end": {"name": "Shinjuku"},
-        "id": 3
-    },
-    "currentExists": true,
-    "planned": [
-        {
-            "route": [{"name": "Mita"}],
-            "name": "test",
-            "start": {"name": "Mita"},
-            "end": {"name": "Shibakoen"},
-            "id": 1
-        },
-        {
-            "route": [{"name": "Mita"}],
-            "name": "route",
-            "start": {"name": "Mita"},
-            "end": {"name": "Mita"},
-            "id": 4
-        }
-    ],
-    "completed": [{
-        "route": [{"name": "Mita"}],
-        "name": "test",
-        "start": {"name": "Mita"},
-        "end": {"name": "Gotanda"},
-        "id": 2
-    }],
-    "id": 5
+    "currentExists": false,
+    "planned": [],
+    "completed": [],
+    "id": 1
 }
