@@ -1,9 +1,6 @@
 package ui;
 
-import model.Line;
-import model.Planner;
-import model.Station;
-import model.Tokyo;
+import model.*;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -25,9 +22,13 @@ public class MetroFinderGUI implements ActionListener {
     private JFrame frame;
     private JComboBox lineDisplay;
     private JLabel lineDisplayInfo;
+    private JLabel plannerDisplayInfo;
     private JLabel dataDisplayInfo;
     private JButton save;
     private JButton load;
+    private JRadioButton planned;
+    private JRadioButton completed;
+    private JRadioButton current;
 
     private static final String JSON_STORE = "./data/planner.json";
     private static final int WIDTH = 400;
@@ -90,7 +91,24 @@ public class MetroFinderGUI implements ActionListener {
 
     //EFFECT: places buttons and components for the planner menu
     public void placeComponentsForPlannerMenu(JPanel panel) {
+        planned = new JRadioButton("Planned");
+        completed = new JRadioButton("Completed");
+        current = new JRadioButton("Current Route");
+        ButtonGroup plannerButtons = new ButtonGroup();
+        plannerDisplayInfo = new JLabel();
 
+        planned.addActionListener(this);
+        completed.addActionListener(this);
+        current.addActionListener(this);
+        plannerButtons.add(current);
+        plannerButtons.add(planned);
+        plannerButtons.add(completed);
+        current.setSelected(true);
+
+        panel.add(current);
+        panel.add(planned);
+        panel.add(completed);
+        panel.add(plannerDisplayInfo);
     }
 
     //EFFECT: places buttons and components for the save/load data menu
@@ -114,6 +132,8 @@ public class MetroFinderGUI implements ActionListener {
             savePlanner();
         } else if (e.getSource() == load) {
             loadPlanner();
+        } else if (e.getSource() == current || e.getSource() == planned || e.getSource() == completed) {
+            actionPerformedPlannerMenu();
         }
     }
 
@@ -141,6 +161,73 @@ public class MetroFinderGUI implements ActionListener {
         }
         String info = title + space + stationTitle + space + stations + space + transferTitle + space + transfers;
         return info;
+    }
+
+    public void actionPerformedPlannerMenu() {
+        String info;
+        if (current.isSelected()) {
+            info = viewCurrentRouteInfo();
+        } else if (planned.isSelected()) {
+            info = viewPlannedRoutesInfo();
+        } else {
+            info = viewCompletedRoutesInfo();
+        }
+        plannerDisplayInfo.setText("<html>" + info + "</html>");
+    }
+
+    public String viewCurrentRouteInfo() {
+        String title = "<b>Your Current Route</b><br/><br/>";
+        String body;
+        if (planner.getCurrentRoute() != null) {
+            body = viewRouteDetailed(planner.getCurrentRoute());
+        } else {
+            body = "<b>No current route selected</b>";
+        }
+
+        return title + body;
+    }
+
+    public String viewPlannedRoutesInfo() {
+        String title = "<b>Your Planned Routes</b><br/><br/>";
+        String body = "";
+        for (Route r : planner.getPlannedRoutes()) {
+            body += viewRoute(r) + "<br/><br/>";
+        }
+
+        return title + body;
+    }
+
+    public String viewCompletedRoutesInfo() {
+        String title = "<b>Your Completed Routes</b><br/><br/>";
+        String body = "";
+        for (Route r : planner.getCompletedRoutes()) {
+            body += viewRoute(r) + "<br/><br/>";
+        }
+        String tally = "<b>Total # of stations visited: " + planner.tallyStations() + "</b>";
+
+        return title + body + tally;
+    }
+
+    //EFFECT: print the route id, name, and total number of stations. Info for condensed view in planner
+    public String viewRoute(Route route) {
+        String head = "ID: " + route.getIdentification() + " | Route: " + route.getName() + "<br/>";
+        String body = "Total stations in route: " + route.getPathToDestination().size() + "<br/>";
+        return head + body;
+    }
+
+    //EFFECT: print the route id, name, start and end, list of stations in the route, and total number of stations
+    public String viewRouteDetailed(Route route) {
+        int count = 1;
+        String head = "ID: " + route.getIdentification() + " | Route: " + route.getName() + "<br/>";
+        String terminals = "Start: " + route.getStartPoint().getName()
+                + " | End: " + route.getEndPoint().getName() + "<br/><br/>";
+        String number = "<b>Total stations in route: " + route.getPathToDestination().size() + "</b><br/><br/>";
+        String body = "";
+        for (Station s : route.getPathToDestination()) {
+            body += count + ". " + s.getName() + "<br/>";
+            count++;
+        }
+        return head + terminals + number + body;
     }
 
     //EFFECT: saves the planner to file
