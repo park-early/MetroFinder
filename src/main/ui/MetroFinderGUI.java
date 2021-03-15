@@ -12,9 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
-import static java.awt.GridBagConstraints.RELATIVE;
-import static java.awt.GridBagConstraints.VERTICAL;
-
 public class MetroFinderGUI implements ActionListener {
     private Tokyo tokyo;
     private Planner planner;
@@ -30,9 +27,12 @@ public class MetroFinderGUI implements ActionListener {
     private JButton save;
     private JButton load;
     private JButton complete;
+    private JButton setCurrent;
+    private JButton remove;
     private JRadioButton planned;
     private JRadioButton completed;
     private JRadioButton current;
+    private JTextField plannerNameBox;
 
     private static final String JSON_STORE = "./data/planner.json";
     private static final int WIDTH = 400;
@@ -104,23 +104,28 @@ public class MetroFinderGUI implements ActionListener {
         ButtonGroup plannerButtons = new ButtonGroup();
         plannerDisplayInfo = new JLabel();
         complete = new JButton("Complete");
+        plannerNameBox = new JTextField(7);
+        setCurrent = new JButton("Set Current");
+        remove = new JButton("Remove");
 
         planned.addActionListener(this);
         completed.addActionListener(this);
         current.addActionListener(this);
         complete.addActionListener(this);
+        setCurrent.addActionListener(this);
+        remove.addActionListener(this);
         plannerButtons.add(current);
         plannerButtons.add(planned);
         plannerButtons.add(completed);
         current.setSelected(true);
 
         panel.setLayout(new GridBagLayout());
-        layoutPlannerMenu(panel);
+        layoutPlannerMenuTopHalf(panel);
     }
 
     //MODIFIES: panel
     //EFFECT: arranges components for it to fit in the panel
-    public void layoutPlannerMenu(JPanel panel) {
+    public void layoutPlannerMenuTopHalf(JPanel panel) {
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.gridx = 0;
@@ -141,11 +146,26 @@ public class MetroFinderGUI implements ActionListener {
         gbc.anchor = GridBagConstraints.CENTER;
         panel.add(plannerDisplayInfo, gbc);
 
+        layoutPlannerMenuBottomHalf(panel, gbc);
+    }
+
+    public void layoutPlannerMenuBottomHalf(JPanel panel, GridBagConstraints gbc) {
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.PAGE_END;
+        gbc.anchor = GridBagConstraints.ABOVE_BASELINE;
         panel.add(complete, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.PAGE_END;
+        panel.add(plannerNameBox, gbc);
+
+        gbc.gridx = 1;
+        panel.add(setCurrent, gbc);
+
+        gbc.gridx = 2;
+        panel.add(remove, gbc);
     }
 
     //MODIFIES: panel
@@ -174,6 +194,10 @@ public class MetroFinderGUI implements ActionListener {
             actionPerformedPlannerMenu();
         } else if (e.getSource() == complete) {
             planner.completeRoute();
+        } else if (e.getSource() == setCurrent) {
+            changeRoute(plannerNameBox.getText());
+        } else if (e.getSource() == remove) {
+            removeRoute(plannerNameBox.getText());
         }
     }
 
@@ -272,6 +296,53 @@ public class MetroFinderGUI implements ActionListener {
             count++;
         }
         return head + terminals + number + body;
+    }
+
+    //EFFECT: searches for the route in plannedRoutes
+    public Route findRouteInPlanned(String command) {
+        for (Route r : this.planner.getPlannedRoutes()) {
+            String id = String.valueOf(r.getIdentification());
+            if (id.equals(command)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
+    //EFFECT: searches for the route in completedRoutes
+    public Route findRouteInCompleted(String command) {
+        for (Route r : this.planner.getCompletedRoutes()) {
+            String id = String.valueOf(r.getIdentification());
+            if (id.equals(command)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
+    //EFFECT: changes the current route to the new route based on id; does nothing if passed a route that doesn't
+    //        exist or is not in the planned routes
+    public void changeRoute(String id) {
+        Route route;
+
+        if (findRouteInPlanned(id) != null) {
+            route = findRouteInPlanned(id);
+            this.planner.newCurrentRoute(route);
+        }
+    }
+
+    //EFFECT: removes route from planned or completed based on id; does nothing if route is in completed
+    //        or not in planner
+    public void removeRoute(String id) {
+        Route route;
+
+        if (findRouteInPlanned(id) != null) {
+            route = findRouteInPlanned(id);
+            this.planner.getPlannedRoutes().remove(route);
+        } else if (findRouteInCompleted(id) != null) {
+            route = findRouteInCompleted(id);
+            this.planner.getCompletedRoutes().remove(route);
+        }
     }
 
     //EFFECT: saves the planner to file
