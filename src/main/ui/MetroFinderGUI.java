@@ -10,12 +10,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Scanner;
 
 public class MetroFinderGUI implements ActionListener {
     private Tokyo tokyo;
     private Planner planner;
-    private final Scanner input;
+    private Route routeBeingMade;
     private final JsonWriter jsonWriter;
     private final JsonReader jsonReader;
 
@@ -23,16 +22,20 @@ public class MetroFinderGUI implements ActionListener {
     private JComboBox lineDisplay;
     private JLabel lineDisplayInfo;
     private JLabel plannerDisplayInfo;
+    private JLabel rmDisplayInfo;
     private JLabel dataDisplayInfo;
     private JButton save;
     private JButton load;
     private JButton complete;
     private JButton setCurrent;
     private JButton remove;
+    private JButton rmConfirm;
+    private JButton rmEnd;
     private JRadioButton planned;
     private JRadioButton completed;
     private JRadioButton current;
     private JTextField plannerNameBox;
+    private JTextField rmNameBox;
 
     private static final String JSON_STORE = "./data/planner.json";
     private static final int WIDTH = 400;
@@ -42,7 +45,7 @@ public class MetroFinderGUI implements ActionListener {
     public MetroFinderGUI() {
         tokyo = new Tokyo();
         planner = new Planner();
-        input = new Scanner(System.in);
+        routeBeingMade = new Route("");
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
         frame = new JFrame();
@@ -65,20 +68,23 @@ public class MetroFinderGUI implements ActionListener {
 
         JPanel lineCard = new JPanel();
         JPanel plannerCard = new JPanel();
+        JPanel routeMakerCard = new JPanel();
         JPanel dataCard = new JPanel();
         JPanel helpCard = new JPanel();
 
         placeComponentsForLineMenu(lineCard);
         placeComponentsForPlannerMenu(plannerCard);
+        placeComponentsForRouteMakerCard(routeMakerCard);
         placeComponentsForDataCard(dataCard);
         //placeComponentsForHelpCard(helpCard);
 
         tabbedPane.addTab("Lines", lineCard);
         tabbedPane.addTab("Planner", plannerCard);
+        tabbedPane.addTab("Route Maker", routeMakerCard);
         tabbedPane.addTab("Save/Load", dataCard);
         tabbedPane.addTab("Help", helpCard);
 
-        tabbedPane.setSelectedIndex(3);
+        tabbedPane.setSelectedIndex(4);
         pane.add(tabbedPane, BorderLayout.CENTER);
     }
 
@@ -169,6 +175,21 @@ public class MetroFinderGUI implements ActionListener {
     }
 
     //MODIFIES: panel
+    //EFFECT: places components for the route maker menu
+    public void placeComponentsForRouteMakerCard(JPanel panel) {
+        rmConfirm = new JButton("Confirm");
+        rmEnd = new JButton("End");
+        rmNameBox = new JTextField(12);
+        rmDisplayInfo = new JLabel("Enter the name of the new route.");
+        rmConfirm.addActionListener(this);
+        rmEnd.addActionListener(this);
+        panel.add(rmNameBox);
+        panel.add(rmConfirm);
+        panel.add(rmEnd);
+        panel.add(rmDisplayInfo);
+    }
+
+    //MODIFIES: panel
     //EFFECT: places buttons and components for the save/load data menu
     public void placeComponentsForDataCard(JPanel panel) {
         save = new JButton("Save Planner");
@@ -198,6 +219,10 @@ public class MetroFinderGUI implements ActionListener {
             changeRoute(plannerNameBox.getText());
         } else if (e.getSource() == remove) {
             removeRoute(plannerNameBox.getText());
+        } else if (e.getSource() == rmConfirm) {
+            actionPerformedRouteMakerConfirmButton();
+        } else if (e.getSource() == rmEnd) {
+            endRoute();
         }
     }
 
@@ -238,6 +263,17 @@ public class MetroFinderGUI implements ActionListener {
             info = viewCompletedRoutesInfo();
         }
         plannerDisplayInfo.setText("<html>" + info + "</html>");
+    }
+
+    //EFFECT: redirects control flow depending on the state of the route maker
+    public void actionPerformedRouteMakerConfirmButton() {
+        if ((!rmNameBox.getText().equals("")) && routeBeingMade.getName().equals("")) {
+            routeMakerSetName();
+        } else if ((!rmNameBox.getText().equals("")) && routeBeingMade.getPathToDestination().size() == 0) {
+            routeMakerSetStartStation();
+        } else if (!rmNameBox.getText().equals("")) {
+            routeMakerAddStation();
+        }
     }
 
     //EFFECT: displays current route information
@@ -342,6 +378,96 @@ public class MetroFinderGUI implements ActionListener {
         } else if (findRouteInCompleted(id) != null) {
             route = findRouteInCompleted(id);
             this.planner.getCompletedRoutes().remove(route);
+        }
+    }
+
+    //MODIFIES: this
+    //EFFECT: sets the name of the route being made
+    public void routeMakerSetName() {
+        routeBeingMade.setName(rmNameBox.getText());
+        rmDisplayInfo.setText("Now enter a starting station (case-sensitive).");
+    }
+
+    //MODIFIES: this
+    //EFFECT: sets the starting station of the route being made
+    public void routeMakerSetStartStation() {
+        Station start = findStation(rmNameBox.getText());
+        if (start == null) {
+            rmDisplayInfo.setText("Unable to add the station specified\n"
+                    + "Enter a starting station (case-sensitive).");
+        } else {
+            routeBeingMade.setStart(start);
+            rmDisplayInfo.setText("<html><b>Added " + start.getName() + " to the route</b><br/>"
+                    + displayNextStations(start) + "<br/><br/>" + displayRouteSoFar() + "</html>");
+        }
+    }
+
+    //MODIFIES: this
+    //EFFECT: adds a station to the route being made
+    public void routeMakerAddStation() {
+        Station station = findStation(rmNameBox.getText());
+        String info = rmDisplayInfo.getText();
+        if (station == null) {
+            rmDisplayInfo.setText("<html>Unable to add the station specified<br/>"
+                    + "Enter a valid station (case-sensitive).<br/><br/>"
+                    + info);
+        } else {
+            rmDisplayInfo.setText("<html><b>Added " + station.getName() + " to the route</b><br/>"
+                    + displayNextStations(station) + "<br/><br/>" + displayRouteSoFar() + "</html>");
+        }
+    }
+
+    //MODIFIES: route
+    //EFFECT: search and return a station
+    public Station findStation(String command) {
+        for (Line l : tokyo.getLines()) {
+            for (Station s : l.getStations()) {
+                if (s.getName().equals(command)) {
+                    if (routeBeingMade.addStation(s)) {
+                        return s;
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    //EFFECT: presents the next possible stations to add to the path
+    public String displayNextStations(Station choice) {
+        String head = "Enter the next station from options<br/>and click \"Confirm\" (case-sensitive)<br/>";
+        String head2 = "Click \"End\" to end the route<br/><br/>";
+        String body = "";
+        for (Station s : choice.getNextStations()) {
+            body += s.getName() + "<br/>";
+        }
+        return head + head2 + body;
+    }
+
+    //EFFECT: returns a string of the route being made so far
+    public String displayRouteSoFar() {
+        String head = "<b>Route so far:</b><br/>";
+        String body = "";
+        int count = 1;
+        for (Station s : routeBeingMade.getPathToDestination()) {
+            body += count + ". " + s.getName() + "<br/>";
+            count++;
+        }
+        return head + body;
+    }
+
+    //MODIFIES: this
+    //EFFECT: adds the current route being made to the planner and resets the field for the next route
+    //        if the "End" button is clicked prematurely, does nothing
+    public void endRoute() {
+        if (!routeBeingMade.getPathToDestination().isEmpty()) {
+            routeBeingMade.setEnd(
+                    routeBeingMade.getPathToDestination().get(routeBeingMade.getPathToDestination().size() - 1));
+            planner.assignIdentification(routeBeingMade);
+            planner.getPlannedRoutes().add(routeBeingMade);
+            routeBeingMade = new Route("");
+            rmDisplayInfo.setText("Enter the name of the new route.");
         }
     }
 
