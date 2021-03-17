@@ -67,6 +67,17 @@ public class PlannerTest {
     }
 
     @Test
+    public void testCompleteRouteNull() {
+        testPlanner.completeRoute();
+        assertNull(testPlanner.getCurrentRoute());
+        assertEquals(2, testPlanner.getPlannedRoutes().size());
+        assertEquals(1, testPlanner.getCompletedRoutes().size());
+        assertEquals(testRoute2, testPlanner.getCompletedRoutes().get(0));
+        assertEquals(testRoute1, testPlanner.getPlannedRoutes().get(0));
+        assertEquals(testRoute3, testPlanner.getPlannedRoutes().get(1));
+    }
+
+    @Test
     public void testTallyStationsNoneCompleted() {
         testPlanner.getCompletedRoutes().remove(0);
         assertEquals(0, testPlanner.tallyStations());
