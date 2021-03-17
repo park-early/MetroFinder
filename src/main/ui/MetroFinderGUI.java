@@ -76,7 +76,7 @@ public class MetroFinderGUI implements ActionListener {
         placeComponentsForPlannerMenu(plannerCard);
         placeComponentsForRouteMakerCard(routeMakerCard);
         placeComponentsForDataCard(dataCard);
-        //placeComponentsForHelpCard(helpCard);
+        placeComponentsForHelpCard(helpCard);
 
         tabbedPane.addTab("Lines", lineCard);
         tabbedPane.addTab("Planner", plannerCard);
@@ -202,6 +202,22 @@ public class MetroFinderGUI implements ActionListener {
         panel.add(dataDisplayInfo, Component.BOTTOM_ALIGNMENT);
     }
 
+    public void placeComponentsForHelpCard(JPanel panel) {
+        JLabel label = new JLabel();
+        String info = "<html>Welcome to MetroFinder!<br/><br/>"
+                + "<b>Lines</b> -> View information about lines<br/>"
+                + "<b>Planner</b> -> View information about your saved routes<br/>"
+                + "<b>Route Maker</b> -> Make a new route to add to the planner<br/>"
+                + "<b>Save/Load</b> -> Save or load your planner from a save file<br/><br/>"
+                + "The text box at the bottom of the planner page<br/>will only accept Route ID numbers.<br/><br/>"
+                + "The planner will not update immediately,<br/>clicking on \"Current\", \"Planned\", or \"Completed\""
+                + "<br/>will update it without error.<br/><br/>"
+                + "The \"Complete\" button will only register if<br/>you have a current route set.<br/><br/>"
+                + "The \"Remove\" button will only remove routes<br/>in your planned or completed list.";
+        label.setText(info);
+        panel.add(label);
+    }
+
     //EFFECT: redirects control flow to a method to deal with what button/action was selected
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -232,26 +248,6 @@ public class MetroFinderGUI implements ActionListener {
         lineDisplayInfo.setText("<html>" + info + "</html>");
     }
 
-    //EFFECT: converts all the line info into an HTML string format to display as a JLabel
-    public String viewLineInfo(Line line) {
-        int count = 1;
-        String space = "<br/>";
-        String title = "<b>" + line.getName() + " Line - Identifier: " + line.getIdentification() + "</b>";
-        String stationTitle = "<b>Stations:</b>";
-        String stations = "";
-        for (Station s : line.getStations()) {
-            stations += count + ". " + s.getName() + space;
-            count++;
-        }
-        String transferTitle = "<b>Lines that can be transferred to from this one:</b>";
-        String transfers = "";
-        for (Line t : line.getTransfers()) {
-            transfers += t.getName() + space;
-        }
-        String info = title + space + stationTitle + space + stations + space + transferTitle + space + transfers;
-        return info;
-    }
-
     //EFFECT: sets the text for the label depending on what planner element needs to be shown
     public void actionPerformedPlannerMenu() {
         String info;
@@ -274,6 +270,26 @@ public class MetroFinderGUI implements ActionListener {
         } else if (!rmNameBox.getText().equals("")) {
             routeMakerAddStation();
         }
+    }
+
+    //EFFECT: converts all the line info into an HTML string format to display as a JLabel
+    public String viewLineInfo(Line line) {
+        int count = 1;
+        String space = "<br/>";
+        String title = "<b>" + line.getName() + " Line - Identifier: " + line.getIdentification() + "</b>";
+        String stationTitle = "<b>Stations:</b>";
+        String stations = "";
+        for (Station s : line.getStations()) {
+            stations += count + ". " + s.getName() + space;
+            count++;
+        }
+        String transferTitle = "<b>Lines that can be transferred to from this one:</b>";
+        String transfers = "";
+        for (Line t : line.getTransfers()) {
+            transfers += t.getName() + space;
+        }
+        String info = title + space + stationTitle + space + stations + space + transferTitle + space + transfers;
+        return info;
     }
 
     //EFFECT: displays current route information
