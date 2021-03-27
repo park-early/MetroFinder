@@ -1,13 +1,16 @@
 package ui;
 
 import model.*;
+import model.Line;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -40,6 +43,8 @@ public class MetroFinderGUI implements ActionListener {
     private static final String JSON_STORE = "./data/planner.json";
     private static final int WIDTH = 400;
     private static final int HEIGHT = 600;
+    private static final File COMPLETE_SOUND = new File("Wood Plank Flicks.wav");
+    private static final File REMOVE_SOUND = new File("Metallic Clank.wav");
 
     //EFFECT: constructs the GUI for the MetroFinder app
     public MetroFinderGUI() {
@@ -59,6 +64,22 @@ public class MetroFinderGUI implements ActionListener {
 
         placeComponentsForMainMenu(frame);
         frame.setVisible(true);
+
+        setUpBGM();
+    }
+
+    //EFFECT: initiates background music to start playing (and looping)
+    public void setUpBGM() {
+        File file = new File("Night Snow - Asher Fulero.wav");
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //MODIFIES: pane
@@ -231,6 +252,7 @@ public class MetroFinderGUI implements ActionListener {
             actionPerformedPlannerMenu();
         } else if (e.getSource() == complete) {
             planner.completeRoute();
+            playSound(COMPLETE_SOUND);
         } else if (e.getSource() == setCurrent) {
             changeRoute(plannerNameBox.getText());
         } else if (e.getSource() == remove) {
@@ -395,6 +417,7 @@ public class MetroFinderGUI implements ActionListener {
             route = findRouteInCompleted(id);
             this.planner.getCompletedRoutes().remove(route);
         }
+        playSound(REMOVE_SOUND);
     }
 
     //MODIFIES: this
@@ -484,6 +507,20 @@ public class MetroFinderGUI implements ActionListener {
             planner.getPlannedRoutes().add(routeBeingMade);
             routeBeingMade = new Route("");
             rmDisplayInfo.setText("Enter the name of the new route.");
+        }
+    }
+
+    //EFFECT: plays sound effect based on file passed
+    public void playSound(File type) {
+        AudioInputStream audioInputStream;
+        Clip clip;
+        try {
+            audioInputStream = AudioSystem.getAudioInputStream(type);
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.start();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
