@@ -176,6 +176,7 @@ public class MetroFinderGUI implements ActionListener {
         layoutPlannerMenuBottomHalf(panel, gbc);
     }
 
+    //EFFECT: sets up components for the text box and confirm / remove buttons
     public void layoutPlannerMenuBottomHalf(JPanel panel, GridBagConstraints gbc) {
         gbc.gridx = 1;
         gbc.gridy = 2;
@@ -223,6 +224,7 @@ public class MetroFinderGUI implements ActionListener {
         panel.add(dataDisplayInfo, Component.BOTTOM_ALIGNMENT);
     }
 
+    //EFFECT: places components for the help tab
     public void placeComponentsForHelpCard(JPanel panel) {
         JLabel label = new JLabel();
         String info = "<html>Welcome to MetroFinder!<br/><br/>"
