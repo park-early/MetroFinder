@@ -1,5 +1,7 @@
 package model;
 
+import model.exceptions.AdjacentStationException;
+import model.exceptions.EmptyRouteException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
@@ -73,18 +75,16 @@ public class Route implements Writable {
     }
 
     //MODIFIES: this
-    //EFFECT: add a station to the pathToDestination, returns true if the route is empty, or if the station is an
-    //        adjacent station to the last station added; otherwise false
-    public boolean addStation(Station station) {
-        if (this.getPathToDestination().isEmpty()) {
-            this.pathToDestination.add(station);
-            return true;
-        } else if (this.pathToDestination.get(this.pathToDestination.size() - 1).getNextStations().contains(station)) {
-            this.pathToDestination.add(station);
-            return true;
-        } else {
-            return false;
+    //EFFECT: add a station to the pathToDestination and returns true; if the station is not adjacent to the
+    //        previous station in the route, throws AdjacentStationException
+    public boolean addStation(Station station) throws AdjacentStationException {
+        if (!this.pathToDestination.isEmpty()) {
+            if (!this.pathToDestination.get(this.pathToDestination.size() - 1).getNextStations().contains(station)) {
+                throw new AdjacentStationException();
+            }
         }
+        this.pathToDestination.add(station);
+        return true;
     }
 
     //MODIFIES: this
@@ -93,10 +93,13 @@ public class Route implements Writable {
         this.getPathToDestination().add(station);
     }
 
-    //REQUIRES: pathToDestination for this is not empty
     //MODIFIES: this
-    //EFFECT: remove the last added station from the pathToDestination
-    public void removeStation() {
+    //EFFECT: remove the last added station from the pathToDestination; throws EmptyRouteException if the route is
+    //        empty and no station can be removed
+    public void removeStation() throws EmptyRouteException {
+        if (this.pathToDestination.isEmpty()) {
+            throw new EmptyRouteException();
+        }
         this.pathToDestination.remove(this.pathToDestination.size() - 1);
     }
 

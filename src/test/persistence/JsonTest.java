@@ -31,9 +31,9 @@ public class JsonTest {
         Station s2 = new Station("Station 2", l1);
         Station s3 = new Station("Station 3", l1);
 
-        r1.addStation(s1);
-        r1.addStation(s2);
-        r1.addStation(s3);
+        r1.addStationFromSave(s1);
+        r1.addStationFromSave(s2);
+        r1.addStationFromSave(s3);
         r1.setStart(s1);
         r1.setEnd(s3);
 
@@ -50,9 +50,9 @@ public class JsonTest {
         Station s2 = new Station("Station 5", l2);
         Station s3 = new Station("Station 6", l2);
 
-        r2.addStation(s1);
-        r2.addStation(s2);
-        r2.addStation(s3);
+        r2.addStationFromSave(s1);
+        r2.addStationFromSave(s2);
+        r2.addStationFromSave(s3);
         r2.setStart(s1);
         r2.setEnd(s3);
 
@@ -69,9 +69,9 @@ public class JsonTest {
         Station s2 = new Station("Station 8", l3);
         Station s3 = new Station("Station 9", l3);
 
-        r3.addStation(s1);
-        r3.addStation(s2);
-        r3.addStation(s3);
+        r3.addStationFromSave(s1);
+        r3.addStationFromSave(s2);
+        r3.addStationFromSave(s3);
         r3.setStart(s1);
         r3.setEnd(s3);
 

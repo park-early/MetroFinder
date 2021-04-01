@@ -2,6 +2,7 @@ package ui;
 
 import model.*;
 import model.Line;
+import model.exceptions.AdjacentStationException;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -464,9 +465,10 @@ public class MetroFinderGUI implements ActionListener {
         for (Line l : tokyo.getLines()) {
             for (Station s : l.getStations()) {
                 if (s.getName().equals(command)) {
-                    if (routeBeingMade.addStation(s)) {
+                    try {
+                        routeBeingMade.addStation(s);
                         return s;
-                    } else {
+                    } catch (AdjacentStationException e) {
                         return null;
                     }
                 }

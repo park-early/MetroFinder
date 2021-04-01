@@ -1,5 +1,6 @@
 package model;
 
+import model.exceptions.AdjacentStationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ public class PlannerTest {
     private Station testStation;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws AdjacentStationException {
         testPlanner = new Planner();
         testRoute1 = new Route("Route A");
         testRoute1.setIdentification(1);

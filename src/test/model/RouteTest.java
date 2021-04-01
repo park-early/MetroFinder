@@ -1,5 +1,7 @@
 package model;
 
+import model.exceptions.AdjacentStationException;
+import model.exceptions.EmptyRouteException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,14 +43,22 @@ public class RouteTest {
 
     @Test
     public void testAddStation() {
-        assertTrue(testRoute.addStation(station1));
+        try {
+            assertTrue(testRoute.addStation(station1));
+        } catch (AdjacentStationException e) {
+            fail("Unexpected AdjacentStationException");
+        }
         assertEquals(station1, testRoute.getPathToDestination().get(0));
     }
 
     @Test
     public void testAddStationMultiple() {
-        assertTrue(testRoute.addStation(station1));
-        assertTrue(testRoute.addStation(station2));
+        try {
+            assertTrue(testRoute.addStation(station1));
+            assertTrue(testRoute.addStation(station2));
+        } catch (AdjacentStationException e) {
+            fail("Unexpected AdjacentStationException");
+        }
         assertEquals(station1, testRoute.getPathToDestination().get(0));
         assertEquals(station2, testRoute.getPathToDestination().get(1));
     }
@@ -57,20 +67,34 @@ public class RouteTest {
     public void testAddStationNotAdjacent() {
         Station station3 = new Station("S3", testLine);
         station3.getNextStations().add(station2);
-        assertTrue(testRoute.addStation(station1));
-        assertFalse(testRoute.addStation(station3));
+        try {
+            assertTrue(testRoute.addStation(station1));
+            testRoute.addStation(station3);
+            fail("AdjacentStationException expected");
+        } catch (AdjacentStationException e) {
+            //pass
+        }
     }
 
     @Test
     public void testAddStationSameStation() {
-        assertTrue(testRoute.addStation(station1));
-        assertFalse(testRoute.addStation(station1));
+        try {
+            assertTrue(testRoute.addStation(station1));
+            testRoute.addStation(station1);
+            fail("AdjacentStationException expected");
+        } catch (AdjacentStationException e) {
+            //pass
+        }
     }
 
     @Test
     public void testRemoveStation() {
         testRoute.getPathToDestination().add(station1);
-        testRoute.removeStation();
+        try {
+            testRoute.removeStation();
+        } catch (EmptyRouteException e) {
+            fail("Unexpected EmptyRouteException");
+        }
         assertEquals(0, testRoute.getPathToDestination().size());
     }
 
@@ -78,8 +102,22 @@ public class RouteTest {
     public void testRemoveStationMultiple() {
         testRoute.getPathToDestination().add(station1);
         testRoute.getPathToDestination().add(station2);
-        testRoute.removeStation();
-        testRoute.removeStation();
+        try {
+            testRoute.removeStation();
+            testRoute.removeStation();
+        } catch (EmptyRouteException e) {
+            fail("Unexpected EmptyRouteException");
+        }
         assertEquals(0, testRoute.getPathToDestination().size());
+    }
+
+    @Test
+    public void testRemoveStationEmptyException() {
+        try {
+            testRoute.removeStation();
+            fail("EmptyRouteException expected");
+        } catch (EmptyRouteException e) {
+            //pass
+        }
     }
 }

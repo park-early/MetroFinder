@@ -1,6 +1,7 @@
 package ui;
 
 import model.*;
+import model.exceptions.AdjacentStationException;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -309,10 +310,11 @@ public class MetroFinderApp {
         for (Line l : tokyo.getLines()) {
             for (Station s : l.getStations()) {
                 if (s.getName().equals(command)) {
-                    if (route.addStation(s)) {
+                    try {
+                        route.addStation(s);
                         System.out.println("Added " + s.getName() + " to the route.");
                         return s;
-                    } else {
+                    } catch (AdjacentStationException e) {
                         System.out.println("Unable to add the station specified");
                         return null;
                     }

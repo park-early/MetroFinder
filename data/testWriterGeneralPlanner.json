@@ -1,6 +1,10 @@
 {
     "current": {
-        "route": [{"name": "Station 7"}],
+        "route": [
+            {"name": "Station 7"},
+            {"name": "Station 8"},
+            {"name": "Station 9"}
+        ],
         "name": "Route 3",
         "start": {"name": "Station 7"},
         "end": {"name": "Station 9"},
@@ -8,14 +12,22 @@
     },
     "currentExists": true,
     "planned": [{
-        "route": [{"name": "Station 1"}],
+        "route": [
+            {"name": "Station 1"},
+            {"name": "Station 2"},
+            {"name": "Station 3"}
+        ],
         "name": "Route 1",
         "start": {"name": "Station 1"},
         "end": {"name": "Station 3"},
         "id": 1
     }],
     "completed": [{
-        "route": [{"name": "Station 4"}],
+        "route": [
+            {"name": "Station 4"},
+            {"name": "Station 5"},
+            {"name": "Station 6"}
+        ],
         "name": "Route 2",
         "start": {"name": "Station 4"},
         "end": {"name": "Station 6"},
