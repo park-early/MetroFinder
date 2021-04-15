@@ -35,20 +35,6 @@
     "completed": [
         {
             "route": [
-                {"name": "Shinjuku"},
-                {"name": "Shinjuku-Sanchome"},
-                {"name": "Akebonobashi"},
-                {"name": "Ichigaya"},
-                {"name": "Kudanshita"},
-                {"name": "Jimbocho"}
-            ],
-            "name": "myfourth",
-            "start": {"name": "Shinjuku"},
-            "end": {"name": "Jimbocho"},
-            "id": 4
-        },
-        {
-            "route": [
                 {"name": "Magome"},
                 {"name": "Nakanobu"},
                 {"name": "Magome"},
